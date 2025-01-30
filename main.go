@@ -88,9 +88,10 @@ func main() {
 	}
 
 	if len(opts.Proxy) > 0 {
+		println(opts.Proxy)
 		_, err := url.Parse(opts.Proxy)
-		if err == nil {
-			fmt.Println("Proxy doesn't respect url format:", err)
+		if err != nil { // Only exit on actual parsing error
+			fmt.Println("Proxy doesn't respect URL format:", err)
 			os.Exit(1)
 		}
 	}

@@ -1,0 +1,37 @@
+rules:
+  XssDetection:
+    description: This rule checks for reflected parameters
+    injections:
+      - '"><h2>asd</h2>'
+      - <asd>test</asd>
+    expectation:
+      responseContents:
+        - <h2>asd</h2>
+        - <asd>test</asd>
+      responseHeaders:
+        Content-Type: html
+rules:
+  CallbackFuzz:
+    description: Test for open redirects and potential SSRFs by checking for certain responses or callbacks to your server
+    extraParams:
+      - url
+      - redirect_url
+    injections:
+      - "http://[[domain]].example.net/"
+      - "//example.net?targetUrl=[[fullurl]]"
+      - "https://example.net?target=[[domain]][[path]]"
+      - "@example.net"
+    expectation:
+      responseContents:
+        - Example Domain
+SqlInjectionCheck:
+  description: Test for potential SQL injections by injecting characters to break SQL statements
+  injections:
+    - "[[originalvalue]]'"
+  expectation:
+    responseCodes:
+      - 500
+  heuristics:
+    injection: "[[originalvalue]]''"
+    baselineMatches:
+      - "responseCode"
